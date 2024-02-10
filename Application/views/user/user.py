@@ -1,19 +1,19 @@
 import datetime
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.data.repo.user.achemy_user_repo import UserRepoAlchemy
 from src.dto.user.user import User
-from src.models.session import async_session, get_db
+from src.models.session import async_session, get_session
 
 user_router = APIRouter(prefix='/user', tags=['user'])
 
 
 @user_router.post('/create')
-async def create_user():
-    session = async_session()
+async def create_user(session: AsyncSession = Depends(get_session)):
     repo = UserRepoAlchemy(
-        session= session
+        session=session
     )
 
     async with repo:
