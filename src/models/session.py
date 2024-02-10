@@ -10,7 +10,7 @@ engine = create_async_engine(
     settings.REAL_DATABASE_URL,
     future=True,
     echo=True,
-    expire_on_commit=False
+    # expire_on_commit=False
 )
 
 # create session for the interaction with database

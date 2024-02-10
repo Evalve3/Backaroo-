@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Boolean, TIMESTAMP
+from sqlalchemy import Boolean, TIMESTAMP, Date
 from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
@@ -17,7 +17,7 @@ class UserModel(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     avatar = Column(String, nullable=True)
-    date_birth = Column(TIMESTAMP, nullable=False)
+    date_birth = Column(Date, nullable=False)
     is_active = Column(Boolean(), default=True)
     hashed_password = Column(String, nullable=False)
 
