@@ -11,10 +11,13 @@ class User(BaseModel, BaseEntity):
     last_name: str
     date_birth: datetime
     email: str
-    avatar: str
+
+    avatar: str = None
+
     # After creation
     is_active: bool = None
     uid: str = None
+    hashed_password: str = None
 
     @classmethod
     def from_dict(cls, other: dict):
