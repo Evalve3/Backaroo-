@@ -12,7 +12,7 @@ class AsyncUserRepository(BaseAsyncRepository, ABC):
         pass
 
     @abstractmethod
-    async def get_list(self, filter_params: dict) -> List[User]:
+    async def get_list(self, **kwargs) -> List[User]:
         pass
 
     @abstractmethod

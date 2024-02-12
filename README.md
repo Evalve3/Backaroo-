@@ -9,6 +9,9 @@ DATABASE_PASSWORD=
 DATABASE_PORT=
 DATABASE_HOSTNAME=
 DATABASE_NAME=
+ACCESS_TOKEN_EXPIRE_MINUTES= (если не указать - будет значение по умолчанию)
+SECRET_KEY= (если не указать - будет значение по умолчанию)
+JWT_ALGORITHM= (если не указать - будет значение по умолчанию)
 ```
 
 Для накатывания миграций, если файла alembic.ini ещё нет, нужно запустить в терминале команду:

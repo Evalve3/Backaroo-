@@ -9,5 +9,5 @@ class CreateUserUC(BaseAsyncUseCase):
 
     async def execute(self, user: User) -> User:
         async with self.user_repo as user_repo:
-            res = await user_repo.create(user)
-            return res
+            created_user = await user_repo.create(user)
+            return created_user

@@ -31,7 +31,7 @@ class BaseAsyncReadOnlyRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_list(self, filter_params: dict) -> Iterable[BaseEntity]:
+    async def get_list(self, **kwargs) -> Iterable[BaseEntity]:
         pass
 
 
