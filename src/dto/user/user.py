@@ -18,7 +18,7 @@ class User(BaseModel, BaseEntity):
 
     # After creation
     is_active: bool = Field(default=True)
-    uid: str = Field(default=uuid.uuid4())
+    uid: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4)
     hashed_password: Optional[str] = Field(default=None)
 
     @classmethod

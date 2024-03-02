@@ -23,7 +23,7 @@ class UserModel(Base):
 
     def dict(self):
         return {
-            "uid": str(self.uid),
+            "uid": self.uid,
             "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,

@@ -1,7 +1,10 @@
 from typing import List
+from uuid import UUID
 
+import asyncpg
 from sqlalchemy import select, and_
 
+from src.core.repo.user.UserRepoExceptions import UniqueViolationException
 from src.core.repo.user.user_repo import AsyncUserRepository
 from src.data.repo.sql_alchtmy_base_repo import BaseSqlAlchemyAsyncRepository
 from src.dto.user.user import User
@@ -10,7 +13,7 @@ from src.models.user.user_model import UserModel
 
 class UserRepoAlchemy(BaseSqlAlchemyAsyncRepository, AsyncUserRepository):
 
-    async def get(self, uid: str) -> User:
+    async def get(self, uid: UUID) -> User:
         user = (await self._session.scalars(select(UserModel).where(UserModel.uid == uid))).first()
         user_dto = User(**user.dict())
         return user_dto
@@ -24,6 +27,12 @@ class UserRepoAlchemy(BaseSqlAlchemyAsyncRepository, AsyncUserRepository):
         return [User(**user.dict()) for user in users]
 
     async def create(self, other: User) -> User:
+        if (await self._session.scalars(select(UserModel).where(UserModel.uid == other.uid))).first():
+            raise UniqueViolationException("Uid already exists")
+        if (await self._session.scalars(select(UserModel).where(UserModel.username == other.username))).first():  # noqa
+            raise UniqueViolationException("Username already exists")
+        if (await self._session.scalars(select(UserModel).where(UserModel.email == other.email))).first():  # noqa
+            raise UniqueViolationException("Email already exists")
         user = UserModel(**other.dict())
         self._session.add(user)
         user_dto = User(**user.dict())

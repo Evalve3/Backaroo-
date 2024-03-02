@@ -1,5 +1,6 @@
 from hashlib import sha256
 from typing import Union
+from uuid import UUID
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -30,7 +31,7 @@ async def get_current_user_from_token(
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
-        uid: str = payload.get("sub")
+        uid: UUID = payload.get("sub")
         if uid is None:
             raise credentials_exception
     except JWTError:
