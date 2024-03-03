@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import List
 from uuid import UUID
 
-from src.core.repo.base_repo import BaseAsyncRepository
+from src.abc.repo.base_repo import BaseAsyncRepository
 from src.dto.user.user import User
 
 

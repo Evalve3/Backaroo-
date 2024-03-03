@@ -9,9 +9,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 import settings
-from src.data.repo.user.achemy_user_repo import UserRepoAlchemy
+from src.data.user.repo.achemy_user_repo import UserRepoAlchemy
 from src.dto.user.user import User
-from src.models.session import get_session
+from models.session import get_session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 

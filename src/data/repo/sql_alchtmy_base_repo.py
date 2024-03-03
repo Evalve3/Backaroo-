@@ -2,7 +2,7 @@ from abc import ABC
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.repo.base_repo import BaseAsyncRepository
+from src.abc.repo.base_repo import BaseAsyncRepository
 
 
 class BaseSqlAlchemyAsyncRepository(BaseAsyncRepository, ABC):
