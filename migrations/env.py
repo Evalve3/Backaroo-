@@ -12,6 +12,11 @@ from models.category.country_model import CountryModel
 from models.collect.collect_model import CollectModel
 from models.collect.donation_model import DonationModel
 from models.collect.gift_model import GiftModel
+from models.collect_notification.notification_model import SubscribeNotificationModel, NotificationModel
+from models.collect.comments_model import CommentModel
+from models.news.news_model import NewsModel
+from models.collect.question_model import QuestionModel, QuestionAnswerModel
+from models.support.question_model import SupportQuestionModel
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
