@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 
 from models.category.country_model import CountryModel
 from models.db_init import Base
+from models.file.file_model import FileModel
 
 
 class UserModel(Base):
@@ -18,12 +19,12 @@ class UserModel(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
-    avatar = Column(String, nullable=True)  # url to avatar img
+    avatar_id = Column(UUID(as_uuid=True), ForeignKey('files.uid'), nullable=True)
+    avatar = relationship(FileModel)
     date_birth = Column(Date, nullable=False)
     is_active = Column(Boolean(), default=True)  # ban / unban
     hashed_password = Column(String, nullable=False)
     profile_status = Column(String, nullable=True)  # status (rcf - need verification, active, ban)
-    profile_background = Column(String, nullable=True)  # url to background img
     additional_info = Column(String, nullable=True)  # additional info
     sex = Column(Boolean, nullable=True)
     adult_content = Column(Boolean, nullable=True)  # adult content status

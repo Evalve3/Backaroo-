@@ -1,4 +1,5 @@
-from typing import List
+import asyncio
+from typing import List, Tuple
 from uuid import UUID
 
 from sqlalchemy import select, and_
@@ -15,8 +16,9 @@ from models.user.user_model import UserModel
 class UserRepoAlchemy(BaseSqlAlchemyAsyncRepository, AsyncUserRepository):
 
     async def get(self, uid: UUID) -> User:
-        user = (await self._session.scalars(select(UserModel).options(joinedload(UserModel.country)).where(UserModel.uid == uid))).first()
-        user_dto = await UserMapper.to_dto(user)
+        user = (await self._session.scalars(
+            select(UserModel).options(joinedload(UserModel.country)).where(UserModel.uid == uid))).first()
+        user_dto = UserMapper.to_dto(user)
         return user_dto
 
     async def get_list(self, **kwargs) -> List[User]:
@@ -25,7 +27,7 @@ class UserRepoAlchemy(BaseSqlAlchemyAsyncRepository, AsyncUserRepository):
         query = query.options(joinedload(UserModel.country)).where(and_(*conditions))
         result = await self._session.execute(query)
         users = result.scalars().all()
-        return [(await UserMapper.to_dto(user)) for user in users]
+        return [UserMapper.to_dto(user) for user in users]
 
     async def create(self, other: User) -> User:
         if (await self._session.scalars(select(UserModel).where(UserModel.uid == other.uid))).first():
@@ -34,13 +36,14 @@ class UserRepoAlchemy(BaseSqlAlchemyAsyncRepository, AsyncUserRepository):
             raise UniqueViolationException("Username already exists")
         if (await self._session.scalars(select(UserModel).where(UserModel.email == other.email))).first():  # noqa
             raise UniqueViolationException("Email already exists")
-        user = await UserMapper.to_model(other)
+
+        user = UserMapper.to_model(other)
         self._session.add(user)
-        user_dto = await UserMapper.to_dto(user)
+        user_dto = UserMapper.to_dto(user)
         return user_dto
 
-    async def update(self, uid: str, user: User) -> User:
+    async def update(self, uid: UUID, user: User) -> User:
         pass
 
-    async def delete(self, uid: str) -> bool:
+    async def delete(self, uid: UUID) -> bool:
         pass

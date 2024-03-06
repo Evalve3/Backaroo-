@@ -29,14 +29,18 @@ async def create_user(body: UserCreate,
                           date_birth=body.date_birth,
                           email=body.email,
                           hashed_password=hashed_password)
-    user_repo = UserRepoAlchemy(session=session)
-    create_user_case = CreateUserUC(user_repo=user_repo)
-    res = await create_user_case.execute(user=user_to_create)
-    if isinstance(res, ErrorResponse):
-        raise HTTPException(
-            status_code=res.code,
-            detail=res.error
-        )
+    async with session.begin():
+        user_repo = UserRepoAlchemy(session=session)
+        create_user_case = CreateUserUC(user_repo=user_repo)
+        res = await create_user_case.execute(user=user_to_create)
+
+        if isinstance(res, ErrorResponse):  # очень важно проверять тип ответа внутри контекстного менеджера
+            # чтобы транзакция откатилась если произошла ошибка
+            raise HTTPException(
+                status_code=res.code,
+                detail=res.error
+            )
+
     user = res.data
     show_user = ShowUser(uid=user.uid,
                          first_name=user.first_name,

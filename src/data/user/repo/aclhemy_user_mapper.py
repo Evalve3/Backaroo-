@@ -6,7 +6,7 @@ from src.dto.category.category import Country
 class UserMapper:
 
     @staticmethod
-    async def to_dto(user: UserModel) -> User:
+    def to_dto(user: UserModel) -> User:
         country = Country(**user.country.dict()) if user.country else None
 
         return User(
@@ -16,7 +16,6 @@ class UserMapper:
             date_birth=user.date_birth,
             email=user.email,
             avatar=user.avatar,
-            profile_background=user.profile_background,
             profile_status=user.profile_status,
             additional_info=user.additional_info,
             sex=user.sex,
@@ -29,7 +28,7 @@ class UserMapper:
         )
 
     @staticmethod
-    async def to_model(user: User) -> UserModel:
+    def to_model(user: User) -> UserModel:
         country_uid = user.country.uid if user.country else None
         return UserModel(
             uid=user.uid,
@@ -39,7 +38,6 @@ class UserMapper:
             date_birth=user.date_birth,
             email=user.email,
             avatar=user.avatar,
-            profile_background=user.profile_background,
             profile_status=user.profile_status,
             additional_info=user.additional_info,
             sex=user.sex,

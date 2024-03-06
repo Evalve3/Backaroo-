@@ -6,13 +6,13 @@ import settings
 # create async engine for interaction with database
 engine = create_async_engine(
     settings.REAL_DATABASE_URL,
-    future=True,
+    # future=True,
     # echo=True,
-    # expire_on_commit=False
 )
 
 # create session for the interaction with database
-async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession,
+                                   autocommit=False, autoflush=False)
 
 
 # Dependency

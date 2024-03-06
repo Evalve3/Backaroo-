@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from models.category.category_model import CollectCategoryModel
 from models.category.country_model import CountryModel
 from models.db_init import Base
+from models.file.file_model import FileModel
 
 
 class CollectModel(Base):
@@ -22,6 +23,8 @@ class CollectModel(Base):
     status = Column(Boolean, nullable=False)
     country_id = Column(UUID(as_uuid=True), ForeignKey('countries.uid'), nullable=False)
     country = relationship(CountryModel)
+    image_id = Column(UUID(as_uuid=True), ForeignKey('files.uid'), nullable=True)
+    image = relationship(FileModel)
 
     def dict(self):
         return {
