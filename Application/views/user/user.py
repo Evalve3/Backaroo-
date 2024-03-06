@@ -74,5 +74,7 @@ async def read_users_me(current_user: User = Depends(get_current_user_from_token
                    last_name=current_user.last_name,
                    email=current_user.email,
                    is_active=current_user.is_active,
-                   country=current_user.country.name if current_user.country else None)
+                   country=current_user.country.name if current_user.country else None,
+                   avatar_file_id=current_user.avatar_id if current_user.avatar_id else None
+                   )
     return res

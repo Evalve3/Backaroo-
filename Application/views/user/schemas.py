@@ -23,6 +23,7 @@ class ShowUser(BaseModel):
     email: EmailStr
     is_active: bool
     country: Optional[str] = None
+    avatar_file_id: Optional[uuid.UUID] = None
 
 
 class Token(BaseModel):

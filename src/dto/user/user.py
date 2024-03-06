@@ -15,7 +15,7 @@ class User(BaseModel, BaseEntity):
     date_birth: datetime.date
     email: str
 
-    avatar: Optional[uuid.UUID] = Field(default=None)
+    avatar_id: Optional[uuid.UUID] = Field(default=None)
     profile_status: Optional[str] = Field(default=None)
     additional_info: Optional[str] = Field(default=None)
     sex: Optional[bool] = Field(default=None)
