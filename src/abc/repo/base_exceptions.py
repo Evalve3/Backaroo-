@@ -1,4 +1,4 @@
-class UserException(Exception):
+class RepoException(Exception):
     ex_data: str
 
     def __init__(self, ex_data: str, *args, **kwargs):
@@ -6,10 +6,10 @@ class UserException(Exception):
         self.ex_data = ex_data
 
 
-class UserNotFoundException(UserException):
+class NotFoundException(RepoException):
     pass
 
 
-class UniqueViolationException(UserException):
+class UniqueViolationException(RepoException):
     pass
 

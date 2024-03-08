@@ -3,25 +3,25 @@ from typing import List
 from uuid import UUID
 
 from src.abc.repo.base_repo import BaseAsyncRepository
-from src.dto.user.user import User
+from src.dto.category.category import Country
 
 
-class AsyncUserRepository(BaseAsyncRepository, ABC):
+class AsyncCountryRepository(BaseAsyncRepository, ABC):
 
     @abstractmethod
-    async def get(self, uid: UUID) -> User:
+    async def get(self, uid: UUID) -> Country:
         pass
 
     @abstractmethod
-    async def get_list(self, **kwargs) -> List[User]:
+    async def get_list(self, **kwargs) -> List[Country]:
         pass
 
     @abstractmethod
-    async def create(self, other: User) -> User:
+    async def create(self, other: Country) -> Country:
         pass
 
     @abstractmethod
-    async def update(self, uid: UUID, user: User) -> User:
+    async def update(self, uid: UUID, country: Country) -> Country:
         pass
 
     @abstractmethod

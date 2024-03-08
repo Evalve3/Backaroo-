@@ -5,7 +5,8 @@ from uuid import UUID
 from sqlalchemy import select, and_
 from sqlalchemy.orm import joinedload
 
-from src.abc.user.repo.UserRepoExceptions import UniqueViolationException
+from models.category.country_model import CountryModel
+from src.abc.repo.base_exceptions import UniqueViolationException, NotFoundException
 from src.abc.user.repo.user_repo import AsyncUserRepository
 from src.data.repo.sql_alchtmy_base_repo import BaseSqlAlchemyAsyncRepository
 from src.data.user.repo.aclhemy_user_mapper import UserMapper
@@ -43,7 +44,33 @@ class UserRepoAlchemy(BaseSqlAlchemyAsyncRepository, AsyncUserRepository):
         return user_dto
 
     async def update(self, uid: UUID, user: User) -> User:
-        pass
+        # Get the existing user
+        existing_user = (await self._session.scalars(
+            select(UserModel).options(joinedload(UserModel.country)).where(UserModel.uid == uid))).first()
+
+
+        # If user does not exist, raise an exception
+        if not existing_user:
+            raise NotFoundException("User not found")
+
+        country = None
+        if user.country:
+            country = (await self._session.scalars(
+                select(CountryModel).where(CountryModel.uid == user.country.uid))).first()
+
+        # Update the fields of the existing user
+        existing_user.username = user.username
+        existing_user.first_name = user.first_name
+        existing_user.last_name = user.last_name
+        existing_user.date_birth = user.date_birth
+        existing_user.email = user.email
+        existing_user.avatar_id = user.avatar_id
+        existing_user.additional_info = user.additional_info
+        existing_user.sex = user.sex
+        existing_user.country = country
+
+        # Return the updated user
+        return UserMapper.to_dto(existing_user)
 
     async def delete(self, uid: UUID) -> bool:
         pass

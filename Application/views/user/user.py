@@ -7,14 +7,18 @@ from starlette import status
 
 import settings
 from Application.security.jwt_token import create_access_token
-from Application.views.user.schemas import UserCreate, ShowUser, Token
+from Application.views.user.schemas import UserCreate, ShowUser, Token, UserEdit
 from Application.views.auth import authenticate_user, get_current_user_from_token
 from src.abc.usecase.base_usecase import ErrorResponse
-from src.logic.user.usecases.create_user import CreateUserUC
+from src.data.country.repo.alchemy_country_repo import CountryRepoAlchemy
+from src.data.user.presenters.user_presenter import UserPresenter
+from src.logic.user.usecases.create_user import CreateUserUC, CreateUserDTO
 from src.data.user.repo.achemy_user_repo import UserRepoAlchemy
 from src.dto.user.user import User
 from models.session import get_session
 from hashlib import sha256
+
+from src.logic.user.usecases.edit_user import EditUserUC, EditUserDTO
 
 user_router = APIRouter(prefix='/user', tags=['user'])
 
@@ -31,8 +35,10 @@ async def create_user(body: UserCreate,
                           hashed_password=hashed_password)
     async with session.begin():
         user_repo = UserRepoAlchemy(session=session)
-        create_user_case = CreateUserUC(user_repo=user_repo)
-        res = await create_user_case.execute(user=user_to_create)
+        presenter = UserPresenter()
+        create_user_case = CreateUserUC(user_repo=user_repo, user_presenter=presenter)
+        dto = CreateUserDTO(user=user_to_create)
+        res = await create_user_case.execute(dto=dto)
 
         if isinstance(res, ErrorResponse):  # очень важно проверять тип ответа внутри контекстного менеджера
             # чтобы транзакция откатилась если произошла ошибка
@@ -41,13 +47,37 @@ async def create_user(body: UserCreate,
                 detail=res.error
             )
 
-    user = res.data
-    show_user = ShowUser(uid=user.uid,
-                         first_name=user.first_name,
-                         last_name=user.last_name,
-                         email=user.email,
-                         is_active=user.is_active)
-    return show_user
+    return res.data
+
+
+@user_router.put('/edit')
+async def edit_user(body: UserEdit,
+                    session: AsyncSession = Depends(get_session),
+                    current_user: User = Depends(get_current_user_from_token)
+                    ) -> ShowUser:
+    async with session.begin():
+        user_repo = UserRepoAlchemy(session=session)
+        presenter = UserPresenter()
+        country_repo = CountryRepoAlchemy(session=session)
+        edit_user_case = EditUserUC(user_repo=user_repo, user_presenter=presenter, country_repo=country_repo)
+        dto = EditUserDTO(user_uid_to_edit=current_user.uid,
+                          username=body.username,
+                          first_name=body.first_name,
+                          last_name=body.last_name,
+                          date_birth=body.date_birth,
+                          email=body.email,
+                          avatar_id=body.avatar_id,
+                          additional_info=body.additional_info,
+                          sex=body.sex,
+                          country=body.country)
+        res = await edit_user_case.execute(dto=dto)
+        if isinstance(res, ErrorResponse):
+            raise HTTPException(
+                status_code=res.code,
+                detail=res.error
+            )
+
+    return res.data
 
 
 @user_router.post("/login")
@@ -69,12 +99,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 @user_router.get('/me', response_model=ShowUser)
 async def read_users_me(current_user: User = Depends(get_current_user_from_token)) -> ShowUser:
-    res = ShowUser(uid=current_user.uid,
-                   first_name=current_user.first_name,
-                   last_name=current_user.last_name,
-                   email=current_user.email,
-                   is_active=current_user.is_active,
-                   country=current_user.country.name if current_user.country else None,
-                   avatar_file_id=current_user.avatar_id if current_user.avatar_id else None
-                   )
+    presenter = UserPresenter()
+    res = presenter.get_user_presentation(current_user)
     return res

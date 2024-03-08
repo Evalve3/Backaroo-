@@ -10,11 +10,9 @@ class CountryModel(Base):
 
     uid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False, unique=True)
-    icon_url = Column(String, nullable=True)
 
     def dict(self):
         return {
             "uid": self.uid,
-            "name": self.name,
-            "icon_url": self.icon_url,
+            "name": self.name
         }
