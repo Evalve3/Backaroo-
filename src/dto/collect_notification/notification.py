@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from src.dto.base_dto import BaseEntity
 from src.dto.collects.collect import Collect

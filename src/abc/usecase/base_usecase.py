@@ -10,6 +10,9 @@ class Response:
         self.code = code
         self.error = error
 
+    def __str__(self):
+        return f"Response(code={self.code}, data={self.data}, error={self.error})"
+
 
 class SuccessResponse(Response):
     def __init__(self, data: Any, code: int = 200):

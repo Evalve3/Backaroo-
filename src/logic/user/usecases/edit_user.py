@@ -9,7 +9,7 @@ from src.abc.repo.base_exceptions import NotFoundException
 from src.abc.repo.base_exceptions import UniqueViolationException
 from src.abc.user.repo.user_repo import AsyncUserRepository
 from src.abc.usecase.base_usecase import BaseAsyncUseCase, SuccessResponse, ErrorResponse
-from src.abc.user.presenters.user.user_presenter import IUserPresenter
+from src.abc.user.presenters.user_presenter import IUserPresenter
 from src.dto.user.user import User
 
 

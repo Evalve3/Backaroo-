@@ -1,6 +1,6 @@
 from Application.views.user.schemas import ShowUser
 from src.dto.user.user import User
-from src.abc.user.presenters.user.user_presenter import IUserPresenter
+from src.abc.user.presenters.user_presenter import IUserPresenter
 
 
 class UserPresenter(IUserPresenter):

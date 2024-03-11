@@ -5,6 +5,9 @@ class RepoException(Exception):
         super().__init__(*args)
         self.ex_data = ex_data
 
+    def __str__(self):
+        return self.ex_data
+
 
 class NotFoundException(RepoException):
     pass

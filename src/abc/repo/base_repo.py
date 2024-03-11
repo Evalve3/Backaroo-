@@ -11,6 +11,7 @@ class BaseAsyncReadOnlyRepository(ABC):
 
     @abstractmethod
     async def get_list(self, **kwargs) -> Iterable[BaseEntity]:
+        #  kwargs can be used for filtering (e.g. name='John')
         pass
 
 

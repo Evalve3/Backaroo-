@@ -7,6 +7,7 @@ from models.category.category_model import CollectCategoryModel
 from models.category.country_model import CountryModel
 from models.db_init import Base
 from models.file.file_model import FileModel
+from models.user.user_model import UserModel
 
 
 class CollectModel(Base):
@@ -20,11 +21,13 @@ class CollectModel(Base):
     category_id = Column(UUID(as_uuid=True), ForeignKey('categories.uid'), nullable=False)
     create_date = Column(Date, nullable=False, server_default=func.now())
     category = relationship(CollectCategoryModel)
-    status = Column(Boolean, nullable=False)
+    status = Column(Boolean, nullable=False)  # Finished or not
     country_id = Column(UUID(as_uuid=True), ForeignKey('countries.uid'), nullable=False)
     country = relationship(CountryModel)
     image_id = Column(UUID(as_uuid=True), ForeignKey('files.uid'), nullable=True)
     image = relationship(FileModel)
+    author_id = Column(UUID(as_uuid=True), ForeignKey('users.uid'), nullable=False)
+    author = relationship(UserModel)
 
     def dict(self):
         return {
