@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Union, Optional
 
 from src.abc.collect.presenters.collect_presenter import ICollectPresenter
-from src.abc.collect.repo.collect_repo import AsyncCollectRepository
+from src.abc.collect.repo.collect_repo import IAsyncCollectRepository
 from src.abc.collect_category.repo.category_repo import AsyncCategoryRepository
 from src.abc.country.repo.country_repo import AsyncCountryRepository
 from src.abc.usecase.base_usecase import BaseAsyncUseCase, SuccessResponse, ErrorResponse
@@ -16,11 +16,12 @@ class GetCollectListDTO:
     sort_by: CollectSortParameter = CollectSortParameter.NAME
     on_page: int = 10
     page: int = 1
+    sort_order: str = "desc"
 
 
 class CreateCollectUC(BaseAsyncUseCase):
     def __init__(self,
-                 collect_repo: AsyncCollectRepository,
+                 collect_repo: IAsyncCollectRepository,
                  category_repo: AsyncCategoryRepository,
                  country_repo: AsyncCountryRepository,
                  collect_presenter: ICollectPresenter):
@@ -54,6 +55,7 @@ class CreateCollectUC(BaseAsyncUseCase):
             if dto.sort_by in (CollectSortParameter.COUNTRY, CollectSortParameter.CATEGORY):
                 return ErrorResponse(f"Sort by {dto.sort_by} is not allowed for category and country", code=400)
             collects = await self.collect_repo.get_page(category=category,
+                                                        sort_order=dto.sort_order,
                                                         country=country,
                                                         sort_by=dto.sort_by,
                                                         on_page=dto.on_page,
@@ -62,6 +64,7 @@ class CreateCollectUC(BaseAsyncUseCase):
             if dto.sort_by == CollectSortParameter.CATEGORY:
                 return ErrorResponse(f"Sort by {dto.sort_by} is not allowed for category", code=400)
             collects = await self.collect_repo.get_page(category=category,
+                                                        sort_order=dto.sort_order,
                                                         sort_by=dto.sort_by,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
@@ -69,11 +72,13 @@ class CreateCollectUC(BaseAsyncUseCase):
             if dto.sort_by == CollectSortParameter.COUNTRY:
                 return ErrorResponse(f"Sort by {dto.sort_by} is not allowed for country", code=400)
             collects = await self.collect_repo.get_page(country=country,
+                                                        sort_order=dto.sort_order,
                                                         sort_by=dto.sort_by,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
         else:
             collects = await self.collect_repo.get_page(sort_by=dto.sort_by,
+                                                        sort_order=dto.sort_order,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
 

@@ -6,6 +6,7 @@ from sqlalchemy import select
 
 from models.file.file_model import FileModel
 from src.abc.file.file_repo import AsyncFileRepositoryABC
+from src.abc.repo.base_exceptions import NotFoundException
 from src.data.file.repo.file_mapper import FileMapper
 from src.data.repo.sql_alchtmy_base_repo import BaseSqlAlchemyAsyncRepository
 from src.dto.base_dto import BaseEntity
@@ -29,6 +30,8 @@ class AsyncFileRepository(AsyncFileRepositoryABC, BaseSqlAlchemyAsyncRepository)
     async def get(self, uid: UUID) -> File:
         file = (await self._session.scalars(
             select(FileModel).where(FileModel.uid == uid))).first()
+        if not file:
+            raise NotFoundException(f"File with uid {uid} not found")
         file_dto = FileMapper.to_dto(file)
         return file_dto
 

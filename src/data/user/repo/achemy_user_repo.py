@@ -1,5 +1,4 @@
-import asyncio
-from typing import List, Tuple
+from typing import List
 from uuid import UUID
 
 from sqlalchemy import select, and_

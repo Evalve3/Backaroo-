@@ -21,7 +21,7 @@ class AsyncCategoryRepository(BaseAsyncRepository, ABC):
         pass
 
     @abstractmethod
-    async def update(self, uid: UUID, country: CollectCategory) -> CollectCategory:
+    async def update(self, uid: UUID, category: CollectCategory) -> CollectCategory:
         pass
 
     @abstractmethod

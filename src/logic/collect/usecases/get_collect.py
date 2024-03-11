@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Union
 
 from src.abc.collect.presenters.collect_presenter import ICollectPresenter
-from src.abc.collect.repo.collect_repo import AsyncCollectRepository
+from src.abc.collect.repo.collect_repo import IAsyncCollectRepository
 from src.abc.repo.base_exceptions import NotFoundException
 from src.abc.usecase.base_usecase import BaseAsyncUseCase, SuccessResponse, ErrorResponse
 
@@ -15,7 +15,7 @@ class GetCollectListDTO:
 
 class CreateCollectUC(BaseAsyncUseCase):
     def __init__(self,
-                 collect_repo: AsyncCollectRepository,
+                 collect_repo: IAsyncCollectRepository,
                  collect_presenter: ICollectPresenter):
         self.collect_repo = collect_repo
         self.collect_presenter = collect_presenter

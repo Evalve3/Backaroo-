@@ -14,7 +14,7 @@ class Collect(BaseModel, BaseEntity):
     target_amount: float
     current_amount: float
     category: CollectCategory
-    create_date: datetime.date
+    create_date: datetime
     status: bool
     country: Country
     image_uid: uuid.UUID

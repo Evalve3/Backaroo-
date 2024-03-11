@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Union
 
 from src.abc.collect.presenters.collect_presenter import ICollectPresenter
-from src.abc.collect.repo.collect_repo import AsyncCollectRepository
+from src.abc.collect.repo.collect_repo import IAsyncCollectRepository
 from src.abc.collect_category.repo.category_repo import AsyncCategoryRepository
 from src.abc.country.repo.country_repo import AsyncCountryRepository
 from src.abc.repo.base_exceptions import UniqueViolationException, RepoException
@@ -26,7 +26,7 @@ class CreateCollectDTO:
 
 class CreateCollectUC(BaseAsyncUseCase):
     def __init__(self,
-                 collect_repo: AsyncCollectRepository,
+                 collect_repo: IAsyncCollectRepository,
                  category_repo: AsyncCategoryRepository,
                  country_repo: AsyncCountryRepository,
                  collect_presenter: ICollectPresenter):

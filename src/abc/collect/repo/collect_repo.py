@@ -6,7 +6,7 @@ from src.abc.repo.base_repo import BaseAsyncRepository
 from src.dto.collects.collect import Collect, CollectSortParameter
 
 
-class AsyncCollectRepository(BaseAsyncRepository, ABC):
+class IAsyncCollectRepository(BaseAsyncRepository, ABC):
 
     @abstractmethod
     async def get(self, uid: UUID) -> Collect:
@@ -21,6 +21,7 @@ class AsyncCollectRepository(BaseAsyncRepository, ABC):
                        sort_by: CollectSortParameter,
                        on_page: int,
                        page: int,
+                       sort_order: str = "desc",
                        **kwargs) -> List[Collect]:
         pass
 
@@ -29,7 +30,7 @@ class AsyncCollectRepository(BaseAsyncRepository, ABC):
         pass
 
     @abstractmethod
-    async def update(self, uid: UUID, country: Collect) -> Collect:
+    async def update(self, uid: UUID, collect: Collect) -> Collect:
         pass
 
     @abstractmethod
