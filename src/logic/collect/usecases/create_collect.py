@@ -36,6 +36,7 @@ class CreateCollectUC(BaseAsyncUseCase):
         self.collect_presenter = collect_presenter
 
     async def execute(self, dto: CreateCollectDTO) -> Union[SuccessResponse, ErrorResponse]:
+        # TODO file repo and check file exist
 
         category = await self.category_repo.get_list(name=dto.category_name)
         if not category:

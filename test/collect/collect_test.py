@@ -4,10 +4,9 @@ import pytest
 from uuid import uuid4
 
 from models.session import get_session
-from src.data.collect.alchemy_collect_repo import AsyncCollectRepositoryAlchemy
+from src.data.collect.repo.alchemy_collect_repo import AsyncCollectRepositoryAlchemy
 from src.dto.category.category import CollectCategory, Country
-from src.dto.collects.collect import Collect, CollectSortParameter
-from src.abc.repo.base_exceptions import UniqueViolationException, NotFoundException
+from src.dto.collects.collect import Collect
 from src.dto.user.user import User
 
 

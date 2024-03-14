@@ -7,11 +7,11 @@ from starlette import status
 
 import settings
 from Application.security.jwt_token import create_access_token
-from Application.views.user.schemas import UserCreate, ShowUser, Token, UserEdit
+from Application.views.user.schemas import UserCreateSchema, ShowUserSchema, Token, UserEditSchema
 from Application.views.auth import authenticate_user, get_current_user_from_token
 from src.abc.usecase.base_usecase import ErrorResponse
 from src.data.country.repo.alchemy_country_repo import CountryRepoAlchemy
-from src.data.user.presenters.user_presenter import UserPresenter
+from Application.views.user.presenters.user_presenter import UserPresenter
 from src.logic.user.usecases.create_user import CreateUserUC, CreateUserDTO
 from src.data.user.repo.achemy_user_repo import UserRepoAlchemy
 from src.dto.user.user import User
@@ -23,9 +23,12 @@ from src.logic.user.usecases.edit_user import EditUserUC, EditUserDTO
 user_router = APIRouter(prefix='/user', tags=['user'])
 
 
-@user_router.post('/create')
-async def create_user(body: UserCreate,
-                      session: AsyncSession = Depends(get_session)) -> ShowUser:
+@user_router.post('/')
+async def create_user(body: UserCreateSchema,
+                      session: AsyncSession = Depends(get_session)) -> ShowUserSchema:
+    """
+    Создание пользователя
+    """
     hashed_password = sha256(body.password.encode()).hexdigest()
     user_to_create = User(first_name=body.first_name,
                           last_name=body.last_name,
@@ -47,14 +50,17 @@ async def create_user(body: UserCreate,
                 detail=res.error
             )
 
-    return res.data
+        return res.data
 
 
-@user_router.put('/edit')
-async def edit_user(body: UserEdit,
+@user_router.put('/')
+async def edit_user(body: UserEditSchema,
                     session: AsyncSession = Depends(get_session),
                     current_user: User = Depends(get_current_user_from_token)
-                    ) -> ShowUser:
+                    ) -> ShowUserSchema:
+    """
+    Редактирование пользователя
+    """
     async with session.begin():
         user_repo = UserRepoAlchemy(session=session)
         presenter = UserPresenter()
@@ -77,12 +83,15 @@ async def edit_user(body: UserEdit,
                 detail=res.error
             )
 
-    return res.data
+        return res.data
 
 
 @user_router.post("/login")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                                  session: AsyncSession = Depends(get_session)) -> Token:
+    """
+    Получение токена
+    """
     user = await authenticate_user(form_data.username, form_data.password, session)
     if not user:
         raise HTTPException(
@@ -97,8 +106,11 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@user_router.get('/me', response_model=ShowUser)
-async def read_users_me(current_user: User = Depends(get_current_user_from_token)) -> ShowUser:
+@user_router.get('/me', response_model=ShowUserSchema)
+async def read_users_me(current_user: User = Depends(get_current_user_from_token)) -> ShowUserSchema:
+    """
+    Получение информации о текущем пользователе
+    """
     presenter = UserPresenter()
     res = presenter.get_user_presentation(current_user)
     return res

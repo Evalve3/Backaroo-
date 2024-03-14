@@ -8,7 +8,7 @@ from pydantic import BaseModel, EmailStr, Field
 # LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\-]+$")
 
 
-class UserCreate(BaseModel):
+class UserCreateSchema(BaseModel):
     first_name: str
     username: str
     last_name: str
@@ -17,7 +17,7 @@ class UserCreate(BaseModel):
     date_birth: datetime.date = Field()
 
 
-class UserEdit(BaseModel):
+class UserEditSchema(BaseModel):
     username: str = None
     first_name: str = None
     last_name: str = None
@@ -29,7 +29,13 @@ class UserEdit(BaseModel):
     country: Optional[str] = None
 
 
-class ShowUser(BaseModel):
+class UserPreviewSchema(BaseModel):
+    uid: uuid.UUID
+    avatar_file_id: Optional[uuid.UUID] = None
+    username: str
+
+
+class ShowUserSchema(BaseModel):
     uid: uuid.UUID
     first_name: str
     last_name: str

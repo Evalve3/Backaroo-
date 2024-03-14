@@ -9,18 +9,18 @@ from src.abc.usecase.base_usecase import BaseAsyncUseCase, SuccessResponse, Erro
 
 
 @dataclass
-class GetCollectListDTO:
+class GetCollectDTO:
     collect_uid: uuid.UUID
 
 
-class CreateCollectUC(BaseAsyncUseCase):
+class GetCollectUC(BaseAsyncUseCase):
     def __init__(self,
                  collect_repo: IAsyncCollectRepository,
                  collect_presenter: ICollectPresenter):
         self.collect_repo = collect_repo
         self.collect_presenter = collect_presenter
 
-    async def execute(self, dto: GetCollectListDTO) -> Union[SuccessResponse, ErrorResponse]:
+    async def execute(self, dto: GetCollectDTO) -> Union[SuccessResponse, ErrorResponse]:
 
         try:
             collect = await self.collect_repo.get(dto.collect_uid)

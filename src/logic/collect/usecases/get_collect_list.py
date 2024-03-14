@@ -6,7 +6,7 @@ from src.abc.collect.repo.collect_repo import IAsyncCollectRepository
 from src.abc.collect_category.repo.category_repo import AsyncCategoryRepository
 from src.abc.country.repo.country_repo import AsyncCountryRepository
 from src.abc.usecase.base_usecase import BaseAsyncUseCase, SuccessResponse, ErrorResponse
-from src.dto.collects.collect import CollectSortParameter
+from src.dto.collects.collect import CollectSortParameter, SortOrder
 
 
 @dataclass
@@ -16,10 +16,10 @@ class GetCollectListDTO:
     sort_by: CollectSortParameter = CollectSortParameter.NAME
     on_page: int = 10
     page: int = 1
-    sort_order: str = "desc"
+    sort_order: SortOrder = SortOrder.desc
 
 
-class CreateCollectUC(BaseAsyncUseCase):
+class GetCollectListUC(BaseAsyncUseCase):
     def __init__(self,
                  collect_repo: IAsyncCollectRepository,
                  category_repo: AsyncCategoryRepository,

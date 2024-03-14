@@ -1,12 +1,12 @@
-from Application.views.user.schemas import ShowUser
+from Application.views.user.schemas import ShowUserSchema
 from src.dto.user.user import User
 from src.abc.user.presenters.user_presenter import IUserPresenter
 
 
 class UserPresenter(IUserPresenter):
 
-    def get_user_presentation(self, user: User) -> ShowUser:
-        return ShowUser(
+    def get_user_presentation(self, user: User) -> ShowUserSchema:
+        return ShowUserSchema(
             uid=user.uid,
             username=user.username,
             email=user.email,

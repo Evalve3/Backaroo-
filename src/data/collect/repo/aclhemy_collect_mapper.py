@@ -11,7 +11,6 @@ class CollectMapper:
         country = Country(**collect.country.dict()) if collect.country else None
         author = User(**collect.author.dict()) if collect.author else None
         category = CollectCategory(**collect.category.dict()) if collect.category else None
-
         return Collect(
             name=collect.name,
             description=collect.description,

@@ -3,7 +3,7 @@ from typing import List
 from uuid import UUID
 
 from src.abc.repo.base_repo import BaseAsyncRepository
-from src.dto.collects.collect import Collect, CollectSortParameter
+from src.dto.collects.collect import Collect, CollectSortParameter, SortOrder
 
 
 class IAsyncCollectRepository(BaseAsyncRepository, ABC):
@@ -21,7 +21,7 @@ class IAsyncCollectRepository(BaseAsyncRepository, ABC):
                        sort_by: CollectSortParameter,
                        on_page: int,
                        page: int,
-                       sort_order: str = "desc",
+                       sort_order: SortOrder = SortOrder.desc,
                        **kwargs) -> List[Collect]:
         pass
 

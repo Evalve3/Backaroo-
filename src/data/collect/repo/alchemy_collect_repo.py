@@ -7,9 +7,9 @@ from sqlalchemy.orm import joinedload
 from models.collect.collect_model import CollectModel
 from src.abc.collect.repo.collect_repo import IAsyncCollectRepository
 from src.abc.repo.base_exceptions import UniqueViolationException, NotFoundException
-from src.data.collect.aclhemy_collect_mapper import CollectMapper
+from src.data.collect.repo.aclhemy_collect_mapper import CollectMapper
 from src.data.repo.sql_alchtmy_base_repo import BaseSqlAlchemyAsyncRepository
-from src.dto.collects.collect import Collect, CollectSortParameter
+from src.dto.collects.collect import Collect, CollectSortParameter, SortOrder
 
 
 class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsyncRepository):
@@ -17,7 +17,10 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
     async def get(self, uid: UUID) -> Collect:
         collect = (await self._session.scalars(
             select(CollectModel).options(
-                joinedload(CollectModel.country, CollectModel.author, CollectModel.category)).where(
+                joinedload(CollectModel.country),
+                joinedload(CollectModel.author),
+                joinedload(CollectModel.category)
+            ).where(
                 CollectModel.uid == uid))).first()
         collect_dto = CollectMapper.to_dto(collect)
         return collect_dto
@@ -27,7 +30,10 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
         conditions = [getattr(CollectModel, key) == value for key, value in kwargs.items() if
                       hasattr(CollectModel, key)]
         query = query.options(
-                joinedload(CollectModel.country, CollectModel.author, CollectModel.category)).where(and_(*conditions))
+            joinedload(CollectModel.country),
+            joinedload(CollectModel.author),
+            joinedload(CollectModel.category)
+        ).where(and_(*conditions))
         result = await self._session.execute(query)
         collects = result.scalars().all()
         return [CollectMapper.to_dto(collect) for collect in collects]
@@ -36,15 +42,30 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
                        sort_by: CollectSortParameter,
                        on_page: int,
                        page: int,
-                       sort_order: str = "desc",
+                       sort_order: SortOrder = SortOrder.desc,
                        **kwargs) -> List[Collect]:
         query = select(CollectModel)
-        conditions = [getattr(CollectModel, key) == value for key, value in kwargs.items() if
-                      hasattr(CollectModel, key)]
         query = query.options(
-                joinedload(CollectModel.country, CollectModel.author, CollectModel.category)).where(and_(*conditions))
+            joinedload(CollectModel.country),
+            joinedload(CollectModel.author),
+            joinedload(CollectModel.category)
+        )
+        conditions = []
+        if 'country' in kwargs:
+            conditions.append(CollectModel.country_id == kwargs['country'].uid)
+            kwargs.pop('country')
+        if 'author' in kwargs:
+            conditions.append(CollectModel.author_id == kwargs['author'].uid)
+            kwargs.pop('author')
+        if 'category' in kwargs:
+            conditions.append(CollectModel.category_id == kwargs['category'].uid)
+            kwargs.pop('category')
 
-        if sort_order == "desc":
+        conditions += [getattr(CollectModel, key) == value for key, value in kwargs.items() if
+                       hasattr(CollectModel, key)]
+
+        query = query.where(and_(*conditions))
+        if sort_order == SortOrder.desc:
             query = query.order_by(desc(getattr(CollectModel, sort_by.value)))
         else:
             query = query.order_by(asc(getattr(CollectModel, sort_by.value)))
@@ -58,11 +79,13 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
     async def create(self, other: Collect) -> Collect:
         if (await self._session.scalars(select(CollectModel).where(CollectModel.uid == other.uid))).first():
             raise UniqueViolationException("Uid already exists")
+        if (await self._session.scalars(select(CollectModel).where(CollectModel.name == other.name))).first():
+            raise UniqueViolationException("Name already exists")
 
         collect = CollectMapper.to_model(other)
         self._session.add(collect)
-        collect_dto = CollectMapper.to_dto(collect)
-        return collect_dto
+        other.uid = collect.uid
+        return other
 
     async def update(self, uid: UUID, collect: Collect) -> Collect:
         existing_collect = (await self._session.scalars(

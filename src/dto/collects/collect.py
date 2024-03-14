@@ -35,3 +35,12 @@ class CollectSortParameter(Enum):
     COUNTRY = "country"
     CATEGORY = "category"
     AUTHOR = "author"
+
+    @classmethod
+    def from_string(cls, value: str):
+        return cls(value)
+
+
+class SortOrder(str, Enum):
+    asc = "asc"
+    desc = "desc"
