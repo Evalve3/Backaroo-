@@ -1,3 +1,4 @@
+import uuid
 from abc import ABC, abstractmethod
 from typing import Optional, Iterable
 
@@ -6,7 +7,7 @@ from src.dto.user.user import BaseEntity
 
 class BaseAsyncReadOnlyRepository(ABC):
     @abstractmethod
-    async def get(self, uid: str) -> Optional[BaseEntity]:
+    async def get(self, uid: uuid.UUID) -> Optional[BaseEntity]:
         pass
 
     @abstractmethod
@@ -21,11 +22,11 @@ class BaseAsyncWriteOnlyRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete(self, uid: str) -> bool:
+    async def delete(self, uid: uuid.UUID) -> bool:
         pass
 
     @abstractmethod
-    async def update(self, uid: str, other: BaseEntity) -> BaseEntity:
+    async def update(self, uid: uuid.UUID, other: BaseEntity) -> BaseEntity:
         pass
 
 

@@ -1,4 +1,5 @@
 import uuid
+from _decimal import Decimal
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel
@@ -11,8 +12,8 @@ from src.dto.user.user import User
 class Collect(BaseModel, BaseEntity):
     name: str
     description: str
-    target_amount: float
-    current_amount: float
+    target_amount: Decimal
+    current_amount: Decimal
     category: CollectCategory
     create_date: datetime
     status: bool

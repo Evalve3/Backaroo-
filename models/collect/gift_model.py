@@ -12,3 +12,5 @@ class GiftModel(Base):
     uid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
+#     gift_id = Column(UUID(as_uuid=True), ForeignKey('gifts.uid'), nullable=True)
+#     gift = relationship(GiftModel)

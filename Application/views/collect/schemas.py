@@ -1,4 +1,5 @@
 import uuid
+from _decimal import Decimal
 from datetime import datetime
 from typing import Optional
 
@@ -47,3 +48,7 @@ class CollectPageParams(BaseModel):
     sort_by: CollectSortParameter = Query(CollectSortParameter.NAME)
     sort_order: SortOrder = Query(SortOrder.asc)
 
+
+class CreateMockDonateSchema(BaseModel):
+    collect_uid: uuid.UUID
+    amount: Decimal

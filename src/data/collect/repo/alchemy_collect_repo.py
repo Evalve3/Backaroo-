@@ -22,6 +22,8 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
                 joinedload(CollectModel.category)
             ).where(
                 CollectModel.uid == uid))).first()
+        if not collect:
+            raise NotFoundException(f"Collect not found with uid {uid}")
         collect_dto = CollectMapper.to_dto(collect)
         return collect_dto
 
@@ -89,14 +91,22 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
 
     async def update(self, uid: UUID, collect: Collect) -> Collect:
         existing_collect = (await self._session.scalars(
-            select(CollectModel).where(CollectModel.uid == uid))).first()
+            select(CollectModel).options(
+                joinedload(CollectModel.country),
+                joinedload(CollectModel.author),
+                joinedload(CollectModel.category)
+            ).where(CollectModel.uid == uid))).first()
 
         if not existing_collect:
             raise NotFoundException("Collect not found")
 
         existing_collect.name = collect.name
         existing_collect.description = collect.description
-        existing_collect.date = collect.date
+        existing_collect.date = collect.create_date
+        existing_collect.target_amount = collect.target_amount
+        existing_collect.current_amount = collect.current_amount
+        existing_collect.status = collect.status
+        existing_collect.image_id = collect.image_uid
 
         return CollectMapper.to_dto(existing_collect)
 

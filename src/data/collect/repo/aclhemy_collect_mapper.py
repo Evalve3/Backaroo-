@@ -12,6 +12,7 @@ class CollectMapper:
         author = User(**collect.author.dict()) if collect.author else None
         category = CollectCategory(**collect.category.dict()) if collect.category else None
         return Collect(
+            uid=collect.uid,
             name=collect.name,
             description=collect.description,
             target_amount=collect.target_amount,

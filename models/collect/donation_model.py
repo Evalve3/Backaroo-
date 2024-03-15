@@ -1,11 +1,9 @@
 import uuid
 
-from sqlalchemy import Column, UUID, String, Numeric, Date, func, ForeignKey
+from sqlalchemy import Column, UUID, Numeric, Date, func, ForeignKey, Enum, String
 from sqlalchemy.orm import relationship
 
-
 from models.collect.collect_model import CollectModel
-from models.collect.gift_model import GiftModel
 from models.db_init import Base
 from models.user.user_model import UserModel
 
@@ -20,7 +18,4 @@ class DonationModel(Base):
     author = relationship(UserModel)
     amount = Column(Numeric, nullable=False)
     create_date = Column(Date, nullable=False, server_default=func.now())
-    status = Column(String, nullable=False)  # CNCLD, FAIL, RCVD
-    gift_id = Column(UUID(as_uuid=True), ForeignKey('gifts.uid'), nullable=True)
-    gift = relationship(GiftModel)
-
+    status = Column(String, nullable=False)  # CNCLD', 'FAIL', 'RCVD', 'OK'

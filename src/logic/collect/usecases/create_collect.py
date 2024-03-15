@@ -7,7 +7,8 @@ from src.abc.collect.presenters.collect_presenter import ICollectPresenter
 from src.abc.collect.repo.collect_repo import IAsyncCollectRepository
 from src.abc.collect_category.repo.category_repo import AsyncCategoryRepository
 from src.abc.country.repo.country_repo import AsyncCountryRepository
-from src.abc.repo.base_exceptions import UniqueViolationException, RepoException
+from src.abc.file.file_repo import AsyncFileRepositoryABC
+from src.abc.repo.base_exceptions import UniqueViolationException, RepoException, NotFoundException
 from src.abc.usecase.base_usecase import BaseAsyncUseCase, SuccessResponse, ErrorResponse
 from src.dto.collects.collect import Collect
 from src.dto.user.user import User
@@ -29,14 +30,15 @@ class CreateCollectUC(BaseAsyncUseCase):
                  collect_repo: IAsyncCollectRepository,
                  category_repo: AsyncCategoryRepository,
                  country_repo: AsyncCountryRepository,
+                 file_repo: AsyncFileRepositoryABC,
                  collect_presenter: ICollectPresenter):
         self.collect_repo = collect_repo
         self.category_repo = category_repo
         self.country_repo = country_repo
         self.collect_presenter = collect_presenter
+        self.file_repo = file_repo
 
     async def execute(self, dto: CreateCollectDTO) -> Union[SuccessResponse, ErrorResponse]:
-        # TODO file repo and check file exist
 
         category = await self.category_repo.get_list(name=dto.category_name)
         if not category:
@@ -52,6 +54,11 @@ class CreateCollectUC(BaseAsyncUseCase):
             return ErrorResponse(f"Country {dto.country_name} has more than one record", code=400)
 
         country = country[0]
+
+        try:
+            await self.file_repo.get(dto.image_uid)
+        except NotFoundException as e:
+            return ErrorResponse(str(e), 404)
 
         collect_to_create = Collect(
             name=dto.name,
