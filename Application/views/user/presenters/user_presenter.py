@@ -15,5 +15,5 @@ class UserPresenter(IUserPresenter):
             first_name=user.first_name,
             last_name=user.last_name,
             additional_info=user.additional_info,
-            date_birth=user.date_birth
+            date_birth=user.date_birth,
         )

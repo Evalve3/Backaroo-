@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy import select, and_, desc, asc
+from sqlalchemy import select, and_, desc, asc, func, or_
 from sqlalchemy.orm import joinedload
 
 from models.collect.collect_model import CollectModel
@@ -45,6 +45,7 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
                        on_page: int,
                        page: int,
                        sort_order: SortOrder = SortOrder.desc,
+                       text_to_search: str = None,
                        **kwargs) -> List[Collect]:
         query = select(CollectModel)
         query = query.options(
@@ -65,6 +66,14 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
 
         conditions += [getattr(CollectModel, key) == value for key, value in kwargs.items() if
                        hasattr(CollectModel, key)]
+
+        if text_to_search:
+            conditions.append(
+                or_(
+                    CollectModel.name.ilike(f"%{text_to_search}%"),
+                    CollectModel.description.ilike(f"%{text_to_search}%")
+                )
+            )
 
         query = query.where(and_(*conditions))
         if sort_order == SortOrder.desc:
@@ -119,3 +128,29 @@ class AsyncCollectRepositoryAlchemy(IAsyncCollectRepository, BaseSqlAlchemyAsync
 
         await self._session.delete(existing_collect)
         return True
+
+    async def get_count(self, text_to_search=None, **kwargs) -> int:
+        conditions = []
+        if 'country' in kwargs:
+            conditions.append(CollectModel.country_id == kwargs['country'].uid)
+            kwargs.pop('country')
+        if 'author' in kwargs:
+            conditions.append(CollectModel.author_id == kwargs['author'].uid)
+            kwargs.pop('author')
+        if 'category' in kwargs:
+            conditions.append(CollectModel.category_id == kwargs['category'].uid)
+            kwargs.pop('category')
+
+        conditions += [getattr(CollectModel, key) == value for key, value in kwargs.items() if
+                       hasattr(CollectModel, key)]
+
+        if text_to_search:
+            conditions.append(
+                or_(
+                    CollectModel.name.ilike(f"%{text_to_search}%"),
+                    CollectModel.description.ilike(f"%{text_to_search}%")
+                )
+            )
+
+        result = await self._session.execute(select(func.count()).where(and_(*conditions)).select_from(CollectModel))
+        return result.scalar_one()

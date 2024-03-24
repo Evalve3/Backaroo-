@@ -17,6 +17,7 @@ class GetCollectListDTO:
     on_page: int = 10
     page: int = 1
     sort_order: SortOrder = SortOrder.desc
+    text_to_search: Optional[str] = None
 
 
 class GetCollectListUC(BaseAsyncUseCase):
@@ -55,33 +56,44 @@ class GetCollectListUC(BaseAsyncUseCase):
             if dto.sort_by in (CollectSortParameter.COUNTRY, CollectSortParameter.CATEGORY):
                 return ErrorResponse(f"Sort by {dto.sort_by} is not allowed for category and country", code=400)
             collects = await self.collect_repo.get_page(category=category,
+                                                        text_to_search=dto.text_to_search,
                                                         sort_order=dto.sort_order,
                                                         country=country,
                                                         sort_by=dto.sort_by,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
+            total = await self.collect_repo.get_count(text_to_search=dto.text_to_search,
+                                                      category=category,
+                                                      country=country)
         elif category and not country:
             if dto.sort_by == CollectSortParameter.CATEGORY:
                 return ErrorResponse(f"Sort by {dto.sort_by} is not allowed for category", code=400)
             collects = await self.collect_repo.get_page(category=category,
                                                         sort_order=dto.sort_order,
+                                                        text_to_search=dto.text_to_search,
                                                         sort_by=dto.sort_by,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
+            total = await self.collect_repo.get_count(text_to_search=dto.text_to_search,
+                                                      category=category)
         elif not category and country:
             if dto.sort_by == CollectSortParameter.COUNTRY:
                 return ErrorResponse(f"Sort by {dto.sort_by} is not allowed for country", code=400)
             collects = await self.collect_repo.get_page(country=country,
                                                         sort_order=dto.sort_order,
+                                                        text_to_search=dto.text_to_search,
                                                         sort_by=dto.sort_by,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
+            total = await self.collect_repo.get_count(text_to_search=dto.text_to_search,
+                                                      country=country)
         else:
             collects = await self.collect_repo.get_page(sort_by=dto.sort_by,
                                                         sort_order=dto.sort_order,
+                                                        text_to_search=dto.text_to_search,
                                                         on_page=dto.on_page,
                                                         page=dto.page)
-
-        collects = self.collect_presenter.get_collect_page_presentation(collects, dto.page, dto.on_page, len(collects))
+            total = await self.collect_repo.get_count(text_to_search=dto.text_to_search,)
+        collects = self.collect_presenter.get_collect_page_presentation(collects, dto.page, dto.on_page, total)
 
         return SuccessResponse(collects)

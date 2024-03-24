@@ -26,7 +26,7 @@ async def create_file(session: AsyncSession = Depends(get_session),
     async with session.begin():
         created_file = await file_repo.create(file=file_to_create)
 
-    return {"filename": file.filename}
+    return {"uid": created_file.uid}
 
 
 @file_router.get('/{file_id}')

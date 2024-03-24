@@ -33,6 +33,8 @@ class UserPreviewSchema(BaseModel):
     uid: uuid.UUID
     avatar_file_id: Optional[uuid.UUID] = None
     username: str
+    first_name: str
+    last_name: str
 
 
 class ShowUserSchema(BaseModel):

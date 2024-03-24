@@ -47,6 +47,7 @@ class CollectPageParams(BaseModel):
     country_name: Optional[str] = Query(None)
     sort_by: CollectSortParameter = Query(CollectSortParameter.NAME)
     sort_order: SortOrder = Query(SortOrder.asc)
+    search: Optional[str] = Query(None)
 
 
 class CreateMockDonateSchema(BaseModel):

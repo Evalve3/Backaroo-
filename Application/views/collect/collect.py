@@ -97,7 +97,8 @@ async def get_collect_page(params: CollectPageParams = Depends(),
                                 category_name=params.category_name,
                                 country_name=params.country_name,
                                 sort_by=params.sort_by,
-                                sort_order=params.sort_order)
+                                sort_order=params.sort_order,
+                                text_to_search=params.search)
         res = await uc.execute(dto=dto)
         if isinstance(res, ErrorResponse):
             raise HTTPException(

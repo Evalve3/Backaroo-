@@ -22,7 +22,11 @@ class IAsyncCollectRepository(BaseAsyncRepository, ABC):
                        on_page: int,
                        page: int,
                        sort_order: SortOrder = SortOrder.desc,
+                       text_to_search: str = None,
                        **kwargs) -> List[Collect]:
+        """
+        Search in name and description
+        """
         pass
 
     @abstractmethod
@@ -35,4 +39,8 @@ class IAsyncCollectRepository(BaseAsyncRepository, ABC):
 
     @abstractmethod
     async def delete(self, uid: UUID) -> bool:
+        pass
+
+    @abstractmethod
+    async def get_count(self, text_to_search: str = None, **kwargs) -> int:
         pass

@@ -12,7 +12,9 @@ class CollectPresenter(ICollectPresenter):
         author = UserPreviewSchema(
             uid=collect.author.uid,
             username=collect.author.username,
-            avatar_file_id=collect.author.avatar_id
+            avatar_file_id=collect.author.avatar_id,
+            first_name=collect.author.first_name,
+            last_name=collect.author.last_name,
         )
 
         return ShowCollectSchema(
